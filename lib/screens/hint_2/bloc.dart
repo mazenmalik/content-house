@@ -24,7 +24,7 @@ class Bloc extends base.Bloc {
     final key = arg?.tryGet("key");
     final service = context.server;
 
-    if (key != await service.accessKey) {
+    if (key == await service.accessKey) {
       emit(error_view.ViewState());
       return;
     }

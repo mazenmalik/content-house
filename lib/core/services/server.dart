@@ -11,11 +11,12 @@ extension Extension on BuildContext {
   Server get server => read<Server>();
 }
 
-class Server {
+class Server extends ChangeNotifier {
   Server() : _key = Random().nextInt(9999);
 
   final int _key;
   int _count = 0;
+  int get count => _count;
 
   Future<int> get accessKey =>
       Future.delayed(const Duration(milliseconds: 800)).then((_) => _key);
@@ -33,13 +34,14 @@ class Server {
             "status_code": 503,
             "error_message": "Server is busy. Please try again later."
           };
-
-    return Future<Map<String, dynamic>>.delayed(
+    //Had to modify line 37 because of this error (Invalid argument (computation): The type parameter is not nullable: null)
+    return Future<dynamic>.delayed(
       const Duration(milliseconds: 800),
     ).then((_) => response);
   }
 
   Future<int> addToCount(int value) {
+    notifyListeners();
     return Future.delayed(const Duration(milliseconds: 250)).then(
       (_) => _count += value,
     );
