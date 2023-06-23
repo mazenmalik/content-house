@@ -19,7 +19,7 @@ class App extends StatelessWidget {
     return MultiProvider(
       providers: [
         Provider<Screens>(create: (_) => Screens()),
-        Provider<Server>(create: (_) => Server()),
+        ChangeNotifierProvider(create: (_) => Server()),
       ],
       builder: (context, _) {
         return MaterialApp(

@@ -1,11 +1,7 @@
 export 'package:provider/provider.dart';
-
 import 'package:flutter/material.dart';
 import 'package:mobile_exam/core/app/bloc.dart' as base;
-import 'package:mobile_exam/core/extensions/common.dart';
-import 'package:mobile_exam/core/extensions/map.dart';
 import 'package:mobile_exam/core/services/server.dart';
-
 import 'views/main.dart' as main_view;
 import 'views/loading.dart' as loading_view;
 import 'views/error.dart' as error_view;
@@ -20,15 +16,23 @@ class Bloc extends base.Bloc {
 
   @override
   void init() async {
-    final arg = context.arguments;
-    final key = arg?.tryGet("key");
     final service = context.server;
+    Map<String, dynamic> data = await service.data;
+    int? statusCode = data['status_code'];
+    String? image = data['image'];
+    String? message = data['message'];
+    String? errorMessage = data['error_message'];
+    int? count = data['count'];
 
-    if (key == await service.accessKey) {
-      emit(error_view.ViewState());
+    if (statusCode == 503) {
+      emit(error_view.ViewState(message: errorMessage!));
       return;
     }
 
-    emit(main_view.ViewState());
+    emit(main_view.ViewState(
+      networkImage: image!,
+      message: message!,
+      count: count ?? 0,
+    ));
   }
 }
